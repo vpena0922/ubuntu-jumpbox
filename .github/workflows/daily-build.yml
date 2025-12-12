@@ -1,0 +1,46 @@
+name: 🛠️ Daily Ubuntu App Image Builder
+
+# This schedule runs every day at 12:00 AM UTC
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  # Allows you to manually trigger the workflow from the "Actions" tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write # Crucial permission needed to push to GHCR.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Define Image Variables
+        id: image_vars
+        run: |
+          # Use a date tag for versioning (e.g., 2025.12.11)
+          echo "IMAGE_TAG=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+          # Set the name of your image
+          echo "IMAGE_NAME=ubuntu-jumpbox" >> $GITHUB_OUTPUT
+
+      - name: Log in to GHCR.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          # The GITHUB_TOKEN is a temporary secret GitHub provides for every run
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # Tags the image with 'latest' AND the date
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ steps.image_vars.outputs.IMAGE_NAME }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ steps.image_vars.outputs.IMAGE_NAME }}:${{ steps.image_vars.outputs.IMAGE_TAG }}
