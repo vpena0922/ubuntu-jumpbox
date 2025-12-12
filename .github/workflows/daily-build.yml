@@ -1,10 +1,10 @@
 name: 🛠️ Daily Ubuntu App Image Builder
 
-# This schedule runs every day at 12:00 AM UTC
-on:
-  schedule:
-    - cron: '0 0 * * *'
-  # Allows you to manually trigger the workflow from the "Actions" tab
+# # This schedule runs every day at 12:00 AM UTC
+# on:
+#   schedule:
+#     - cron: '0 0 * * *'
+#   # Allows you to manually trigger the workflow from the "Actions" tab
   workflow_dispatch:
 
 permissions:
