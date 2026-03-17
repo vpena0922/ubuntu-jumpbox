@@ -47,7 +47,7 @@ jobs:
         with:
           package-name: 'ubuntu-jumpbox'
           package-type: 'container'
-          # Keeps the 'latest' tag plus the 3 most recent date-stamped versions
-          min-versions-to-keep: 4 
+          # Keeps the 'latest' tag plus the 2 most recent date-stamped versions
+          min-versions-to-keep: 3 
           # Ensure we don't accidentally delete the one we just built
           ignore-versions: 'latest'
