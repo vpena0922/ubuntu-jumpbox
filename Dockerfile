@@ -28,4 +28,7 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 22
 
+# Add this before the ENTRYPOINT if you have a custom config
+COPY starship.toml /root/.config/starship.toml
+
 ENTRYPOINT ["/entrypoint.sh"]
