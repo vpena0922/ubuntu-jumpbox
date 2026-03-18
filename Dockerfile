@@ -6,9 +6,16 @@ RUN apt-get update && \
     apt-get install -y \
     curl \
     nano \
+    # Starship often looks for a patched font, but in a headless 
+    # SSH container, your LOCAL terminal handles the icons.
+    git \ 
     openssh-server && \
+    # Install Starship
+    curl -sS https://starship.rs/install.sh | sh -s -- -y && \
+    # Add the hook to the bashrc so it starts on login
+    echo 'eval "$(starship init bash)"' >> /root/.bashrc && \
     mkdir -p /var/run/sshd && \
-    # Standard hardening (from your original file)
+    # Standard hardening
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     sed -i 's/#KbdInteractiveAuthentication no/KbdInteractiveAuthentication no/' /etc/ssh/sshd_config && \
@@ -16,11 +23,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy the entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 22
 
-# Use the script to launch the container
 ENTRYPOINT ["/entrypoint.sh"]
